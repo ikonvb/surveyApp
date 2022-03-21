@@ -39,18 +39,33 @@ public class SurveyApiController {
 
 
     //done
-    @ApiOperation("Check authorities by name, returns role")
-    @GetMapping(value = "/check/{loginName}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Role> checkAuthentication(@PathVariable String loginName) {
+    @ApiOperation("Check authorities by id, returns role")
+    @GetMapping(value = "/check/{clientId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Role> checkAuthoritiesById(@PathVariable int clientId) {
 
-        Client client = clientService.findByClientName(loginName);
-        Role role = roleService.findById(client.getRoleId()).orElse(null);
-
-        if (role != null) {
-            return new ResponseEntity<>(role, HttpStatus.OK);
+        Optional<Client> client = clientService.findById(clientId);
+        if (client.isPresent()) {
+            Role role = roleService.findById(client.get().getRoleId()).orElse(null);
+            if (role != null) {
+                return new ResponseEntity<>(role, HttpStatus.OK);
+            }
         }
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
+
+//    //done
+//    @ApiOperation("Check authorities by name, returns role")
+//    @GetMapping(value = "/check/{loginName}", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<Role> checkAuthoritiesByName(@PathVariable String loginName) {
+//
+//        Client client = clientService.findByClientName(loginName);
+//        Role role = roleService.findById(client.getRoleId()).orElse(null);
+//
+//        if (role != null) {
+//            return new ResponseEntity<>(role, HttpStatus.OK);
+//        }
+//        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+//    }
 
 
     //done
