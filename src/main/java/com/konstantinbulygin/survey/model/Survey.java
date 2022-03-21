@@ -1,10 +1,11 @@
-package com.konstantinbulygin.survey.data;
+package com.konstantinbulygin.survey.model;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -27,6 +28,7 @@ public class Survey {
     @Column(name = "name")
     private String name;
 
+    @CreatedDate
     @NotBlank(message = "Start date is mandatory")
     @Column(name = "start_date")
     private LocalDate startDate;

@@ -1,4 +1,4 @@
-package com.konstantinbulygin.survey.data;
+package com.konstantinbulygin.survey.model;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -22,4 +22,7 @@ public class SurveyQuestion {
     @EmbeddedId
     private SurveyQuestionKey key;
 
+    public SurveyQuestion(SurveyQuestionKey key) {
+        this.key = key;
+    }
 }

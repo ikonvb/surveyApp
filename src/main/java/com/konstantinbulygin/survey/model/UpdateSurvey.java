@@ -1,4 +1,4 @@
-package com.konstantinbulygin.survey.data;
+package com.konstantinbulygin.survey.model;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

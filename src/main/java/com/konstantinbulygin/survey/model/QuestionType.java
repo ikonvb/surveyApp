@@ -1,4 +1,4 @@
-package com.konstantinbulygin.survey.data;
+package com.konstantinbulygin.survey.model;
 
 public enum QuestionType {
     TEXT,

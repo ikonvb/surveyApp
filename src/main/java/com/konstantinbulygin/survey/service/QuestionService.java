@@ -1,6 +1,6 @@
 package com.konstantinbulygin.survey.service;
 
-import com.konstantinbulygin.survey.data.Question;
+import com.konstantinbulygin.survey.model.Question;
 import com.konstantinbulygin.survey.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,5 +21,9 @@ public class QuestionService {
 
     public Question findById(int id) {
         return questionRepository.findById(id);
+    }
+
+    public void delete(Question question) {
+        questionRepository.delete(question);
     }
 }

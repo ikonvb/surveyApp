@@ -1,6 +1,6 @@
 package com.konstantinbulygin.survey.service;
 
-import com.konstantinbulygin.survey.data.SurveyQuestion;
+import com.konstantinbulygin.survey.model.SurveyQuestion;
 import com.konstantinbulygin.survey.repository.SurveyQuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,5 +19,9 @@ public class SurveyQuestionService {
 
     public List<Integer> findAllQuestionIdForSurvey(int surveyId) {
         return surveyQuestionRepository.findAllQuestionIdForSurvey(surveyId);
+    }
+
+    public void delete(SurveyQuestion surveyQuestion) {
+        surveyQuestionRepository.delete(surveyQuestion);
     }
 }

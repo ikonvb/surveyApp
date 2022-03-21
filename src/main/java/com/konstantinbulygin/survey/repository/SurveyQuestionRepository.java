@@ -1,7 +1,7 @@
 package com.konstantinbulygin.survey.repository;
 
-import com.konstantinbulygin.survey.data.SurveyQuestion;
-import com.konstantinbulygin.survey.data.SurveyQuestionKey;
+import com.konstantinbulygin.survey.model.SurveyQuestion;
+import com.konstantinbulygin.survey.model.SurveyQuestionKey;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

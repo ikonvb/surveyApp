@@ -1,6 +1,6 @@
 package com.konstantinbulygin.survey.service;
 
-import com.konstantinbulygin.survey.data.Survey;
+import com.konstantinbulygin.survey.model.Survey;
 import com.konstantinbulygin.survey.repository.SurveyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
