@@ -37,15 +37,15 @@ public class SurveyApiController {
     @Autowired
     SurveyQuestionService surveyQuestionService;
 
-    //done
-    @ApiOperation("Register new client, returns client. You have to specify role id. 1-user, 2-admin")
+    //done!!!
+    @ApiOperation("Register new client, returns client. You have to specify role id: 1-user or 2-admin")
     @PostMapping(path = "/register/client", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Client registerClient(@Valid @RequestBody Client jsonClient) {
         Client client = new Client();
         client.setClientName(jsonClient.getClientName());
         client.setPassword(jsonClient.getPassword());
-        client.setStatus(jsonClient.getStatus());
         client.setRoleId(jsonClient.getRoleId());
+        client.setStatus(jsonClient.getStatus() != null ? jsonClient.getStatus() : Status.ACTIVE);
         client.setCreated(LocalDate.now());
         client.setUpdated(LocalDate.now());
         clientService.save(client);
@@ -68,6 +68,18 @@ public class SurveyApiController {
             }
         }
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
+
+    //done
+    @ApiOperation("Show all registered clients, returns list")
+    @GetMapping(value = "/show/clients", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Client>> showClients() {
+        List<Client> clientList = clientService.findAll();
+        if (clientList.size() > 0) {
+            return new ResponseEntity<>(clientList, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
     }
 
     //done
