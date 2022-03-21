@@ -19,7 +19,7 @@ import javax.validation.constraints.NotBlank;
 public class Client extends BaseEntity {
 
     @NotBlank(message = "Name is mandatory")
-    @Column(name = "client_name", unique = true)
+    @Column(name = "client_name")
     String clientName;
 
     @NotBlank(message = "Password is mandatory")
