@@ -37,20 +37,6 @@ public class SurveyApiController {
     @Autowired
     SurveyQuestionService surveyQuestionService;
 
-    //done!!!
-    @ApiOperation("Register new client, returns client. You have to specify role id: 1-user or 2-admin")
-    @PostMapping(path = "/register/client", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Client registerClient(@Valid @RequestBody Client jsonClient) {
-        Client client = new Client();
-        client.setClientName(jsonClient.getClientName());
-        client.setPassword(jsonClient.getPassword());
-        client.setRoleId(jsonClient.getRoleId());
-        client.setStatus(jsonClient.getStatus() != null ? jsonClient.getStatus() : Status.ACTIVE);
-        client.setCreated(LocalDate.now());
-        client.setUpdated(LocalDate.now());
-        clientService.save(client);
-        return client;
-    }
 
     //done
     @ApiOperation("Check authorities by name, returns role")
@@ -70,17 +56,6 @@ public class SurveyApiController {
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
-    //done!!!
-    @ApiOperation("Show all registered clients, returns list")
-    @GetMapping(value = "/show/clients", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Client>> showClients() {
-        List<Client> clientList = clientService.findAll();
-        if (clientList.size() > 0) {
-            return new ResponseEntity<>(clientList, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
-    }
 
     //done
     @ApiOperation("Show all question for particular survey, returns list")
@@ -103,7 +78,12 @@ public class SurveyApiController {
     @GetMapping(value = "/survey/find/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Survey>> findAllSurvey() {
         List<Survey> surveys = surveyService.findAllSurvey();
-        return new ResponseEntity<>(surveys, HttpStatus.OK);
+        if (surveys.size() > 0) {
+            return new ResponseEntity<>(surveys, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
     }
 
     //done
@@ -241,7 +221,7 @@ public class SurveyApiController {
 
     }
 
-    private Role getRole(@PathVariable String loginName) {
+    private Role getRole(String loginName) {
         Client client = clientService.findByClientName(loginName);
         return roleService.findById(client.getRoleId()).orElse(null);
     }
@@ -278,5 +258,33 @@ public class SurveyApiController {
             }
         }
         return new ResponseEntity<>("Client has not been found", HttpStatus.NOT_FOUND);
+    }
+
+    //<=================================================================================================================
+    //done!!!
+    @ApiOperation("Register new client, returns client. You have to specify role id: 1-user or 2-admin")
+    @PostMapping(path = "/register/client", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public Client registerClient(@Valid @RequestBody Client jsonClient) {
+        Client client = new Client();
+        client.setClientName(jsonClient.getClientName());
+        client.setPassword(jsonClient.getPassword());
+        client.setRoleId(jsonClient.getRoleId());
+        client.setStatus(jsonClient.getStatus() != null ? jsonClient.getStatus() : Status.ACTIVE);
+        client.setCreated(LocalDate.now());
+        client.setUpdated(LocalDate.now());
+        clientService.save(client);
+        return client;
+    }
+
+    //done!!!
+    @ApiOperation("Show all registered clients, returns list")
+    @GetMapping(value = "/show/clients", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Client>> showClients() {
+        List<Client> clientList = clientService.findAll();
+        if (clientList.size() > 0) {
+            return new ResponseEntity<>(clientList, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
     }
 }
