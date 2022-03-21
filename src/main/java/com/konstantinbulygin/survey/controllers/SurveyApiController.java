@@ -43,15 +43,11 @@ public class SurveyApiController {
     @GetMapping(value = "/check/{loginName}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Role> checkAuthentication(@PathVariable String loginName) {
 
-        Role role = getRole(loginName);
+        Client client = clientService.findByClientName(loginName);
+        Role role = roleService.findById(client.getRoleId()).orElse(null);
+
         if (role != null) {
-            if (role.getName().equals("ROLE_USER")) {
-                return new ResponseEntity<>(role, HttpStatus.OK);
-            } else if (role.getName().equals("ROLE_ADMIN")) {
-                return new ResponseEntity<>(role, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-            }
+            return new ResponseEntity<>(role, HttpStatus.OK);
         }
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
