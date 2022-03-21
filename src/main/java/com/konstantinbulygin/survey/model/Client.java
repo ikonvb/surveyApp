@@ -5,9 +5,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-import java.util.List;
 
 @Entity
 @Table(name = "clients")
@@ -18,7 +19,7 @@ import java.util.List;
 public class Client extends BaseEntity {
 
     @NotBlank(message = "Name is mandatory")
-    @Column(name = "client_name")
+    @Column(name = "client_name", unique = true)
     String clientName;
 
     @NotBlank(message = "Password is mandatory")

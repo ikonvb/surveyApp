@@ -23,7 +23,7 @@ public class Question {
     private Integer id;
 
     @NotBlank(message = "Text question is mandatory")
-    @Column(name = "question_text")
+    @Column(name = "question_text", unique = true)
     String questionText;
 
     @NotBlank(message = "Question type is mandatory")

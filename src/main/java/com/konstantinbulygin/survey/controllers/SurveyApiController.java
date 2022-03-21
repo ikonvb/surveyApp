@@ -38,7 +38,7 @@ public class SurveyApiController {
     SurveyQuestionService surveyQuestionService;
 
     //done
-    @ApiOperation("Register client, returns Client")
+    @ApiOperation("Register new client, returns client. You have to specify role id. 1-user, 2-admin")
     @PostMapping(path = "/register/client", consumes = MediaType.APPLICATION_JSON_VALUE)
     public Client registerClient(@Valid @RequestBody Client jsonClient) {
         Client client = new Client();
@@ -57,8 +57,7 @@ public class SurveyApiController {
     @GetMapping(value = "/check/{loginName}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Role> checkAuthentication(@PathVariable String loginName) {
 
-        Client client = clientService.findByClientName(loginName);
-        Role role = roleService.findById(client.getRoleId()).orElse(null);
+        Role role = getRole(loginName);
         if (role != null) {
             if (role.getName().equals("ROLE_USER")) {
                 return new ResponseEntity<>(role, HttpStatus.OK);
@@ -97,15 +96,14 @@ public class SurveyApiController {
     }
 
     //done
-    @ApiOperation("Adds question to survey, returns string")
+    @ApiOperation("Adds question to particular survey, returns string")
     @PostMapping(path = "/add/question/{surveyId}/{loginName}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> addQuestionToSurvey(
             @PathVariable int surveyId,
             @PathVariable String loginName,
             @Valid @RequestBody Question quest) {
 
-        Client client = clientService.findByClientName(loginName);
-        Role role = roleService.findById(client.getRoleId()).orElse(null);
+        Role role = getRole(loginName);
 
         if (role != null) {
             if (role.getName().equals("ROLE_USER")) {
@@ -133,12 +131,11 @@ public class SurveyApiController {
     }
 
     //done
-    @ApiOperation("Adds survey if it allowed to current user, returns string")
+    @ApiOperation("Adds survey if it`s allowed for current user, returns string")
     @PostMapping(path = "/add/survey/{loginName}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> createSurvey(@PathVariable String loginName, @Valid @RequestBody Survey sur) {
 
-        Client client = clientService.findByClientName(loginName);
-        Role role = roleService.findById(client.getRoleId()).orElse(null);
+        Role role = getRole(loginName);
         if (role != null) {
             if (role.getName().equals("ROLE_USER")) {
                 return new ResponseEntity<>("You don`t have a permission to add survey", HttpStatus.FORBIDDEN);
@@ -157,12 +154,11 @@ public class SurveyApiController {
     }
 
     //done
-    @ApiOperation("Edit question")
+    @ApiOperation("Edit question for particular survey")
     @PatchMapping(path = "/edit/question", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Question> updateQuestion(@Valid @RequestBody UpdateQuestion updateQuestion) {
 
-        Client client = clientService.findByClientName(updateQuestion.getLoginName());
-        Role role = roleService.findById(client.getRoleId()).orElse(null);
+        Role role = getRole(updateQuestion.getLoginName());
 
         if (role != null) {
             if (role.getName().equals("ROLE_USER")) {
@@ -193,8 +189,7 @@ public class SurveyApiController {
             @PathVariable String loginName,
             @Valid @RequestBody UpdateSurvey updateSurvey
     ) {
-        Client client = clientService.findByClientName(loginName);
-        Role role = roleService.findById(client.getRoleId()).orElse(null);
+        Role role = getRole(loginName);
         if (role != null) {
             if (role.getName().equals("ROLE_USER")) {
                 return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
@@ -220,8 +215,7 @@ public class SurveyApiController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<String> deleteSurvey(@PathVariable int id, @PathVariable String loginName) {
 
-        Client client = clientService.findByClientName(loginName);
-        Role role = roleService.findById(client.getRoleId()).orElse(null);
+        Role role = getRole(loginName);
 
         if (role != null) {
             if (role.getName().equals("ROLE_USER")) {
@@ -236,6 +230,11 @@ public class SurveyApiController {
 
     }
 
+    private Role getRole(@PathVariable String loginName) {
+        Client client = clientService.findByClientName(loginName);
+        return roleService.findById(client.getRoleId()).orElse(null);
+    }
+
     //done
     @ApiOperation("Delete one question, returns HttpStatus.NO_CONTENT")
     @DeleteMapping(path = "/delete/question/{loginName}/{surveyId}/{questionId}")
@@ -244,8 +243,7 @@ public class SurveyApiController {
             @PathVariable int surveyId,
             @PathVariable int questionId) {
 
-        Client client = clientService.findByClientName(loginName);
-        Role role = roleService.findById(client.getRoleId()).orElse(null);
+        Role role = getRole(loginName);
 
         if (role != null) {
             if (role.getName().equals("ROLE_USER")) {
