@@ -70,7 +70,7 @@ public class SurveyApiController {
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
-    //done
+    //done!!!
     @ApiOperation("Show all registered clients, returns list")
     @GetMapping(value = "/show/clients", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Client>> showClients() {
@@ -102,8 +102,7 @@ public class SurveyApiController {
     @ApiOperation("Show all surveys, returns list")
     @GetMapping(value = "/survey/find/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Survey>> findAllSurvey() {
-        LocalDate localDate = LocalDate.now();
-        List<Survey> surveys = surveyService.findAllSurveyByStartDate(localDate);
+        List<Survey> surveys = surveyService.findAllSurvey();
         return new ResponseEntity<>(surveys, HttpStatus.OK);
     }
 
