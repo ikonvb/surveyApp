@@ -38,7 +38,7 @@ public class SurveyApiController {
     SurveyQuestionService surveyQuestionService;
 
     //done
-    @ApiOperation("Get all answers for one survey for current client by id, returns answers")
+    @ApiOperation("Get all answers and surveys for current client by id, returns answers")
     @GetMapping(value = "/get/all/answers/{clientId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Survey>> getAllAnswersById(@PathVariable int clientId) {
 
