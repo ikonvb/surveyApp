@@ -89,6 +89,20 @@ CREATE TABLE public.surveys
     CONSTRAINT surveys_pkey PRIMARY KEY (id)
 )
 ~~~
+
+~~~
+CREATE TABLE public.answers
+(
+    id serial NOT NULL,
+    client_id bigint NOT NULL,
+    survey_id bigint NOT NULL,
+    question_id bigint NOT NULL,
+    answer_text text COLLATE pg_catalog."default",
+    one_choice_answer integer,
+    multi_answer character varying COLLATE pg_catalog."default",
+    CONSTRAINT answers_pkey PRIMARY KEY (id)
+
+~~~
 Вся документация по endpoint для Rest Api (Swagger ui) будет находится здесь - 
 ~~~
 {ваш лоскадльны адресс}/swagger-ui/index.html       
