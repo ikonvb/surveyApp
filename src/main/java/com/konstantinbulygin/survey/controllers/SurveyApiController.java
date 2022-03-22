@@ -12,15 +12,15 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api")
 @Api("Main Controller")
 public class SurveyApiController {
+
+    @Autowired
+    AnswerService answerService;
 
     @Autowired
     RoleService roleService;
@@ -37,6 +37,117 @@ public class SurveyApiController {
     @Autowired
     SurveyQuestionService surveyQuestionService;
 
+    //done
+    @ApiOperation("Get all answers for one survey for current client by id, returns answers")
+    @GetMapping(value = "/get/all/answers/{clientId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Survey>> getAllAnswersById(@PathVariable int clientId) {
+
+        List<Answer> answerList = answerService.findAllByClientId(clientId);
+
+        Set<Integer> surveyIds = new HashSet<>();
+        for (Answer ans : answerList) {
+            surveyIds.add(ans.getSurveyId());
+        }
+
+        List<Survey> surveyList = new ArrayList<>();
+        for (Integer i : surveyIds) {
+            surveyList.add(surveyService.findById(i).get());
+        }
+        for (Survey s : surveyList) {
+            s.setAnswerList(answerService.findAllBySurveyId(s.getId()));
+        }
+
+        if (surveyList.size() > 0) {
+            return new ResponseEntity<>(surveyList, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
+
+    @ApiOperation("Answer to the all questions of the survey for current client, returns answers")
+    @PostMapping(path = "/take/survey/{surveyId}/{clientId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Answer>> takeSurveyAllQuestions(
+
+            @PathVariable int surveyId,
+            @PathVariable int clientId,
+            @RequestBody List<Answer> answers) {
+
+        List<Integer> questIds = surveyQuestionService.findAllQuestionIdForSurvey(surveyId);
+        List<Question> questionList = new ArrayList<>();
+        for (Integer id : questIds) {
+            questionList.add(questionService.findById(id));
+        }
+        List<Answer> answerList = new ArrayList<>();
+        if (questIds.size() == answers.size()) {
+            for (int i = 0; i < answers.size(); i++) {
+                Answer newAnswer = new Answer();
+                switch (questionList.get(i).getQuestionType()) {
+                    case TEXT:
+                        newAnswer.setSurveyId(surveyId);
+                        newAnswer.setClientId(clientId);
+                        newAnswer.setQuestionId(questionList.get(i).getId());
+                        newAnswer.setAnswerText(answers.get(i).getAnswerText());
+                        answerList.add(newAnswer);
+                        break;
+                    case ONE_CHOICE:
+                        newAnswer.setSurveyId(surveyId);
+                        newAnswer.setClientId(clientId);
+                        newAnswer.setQuestionId(questionList.get(i).getId());
+                        newAnswer.setOneChoiceAnswer(answers.get(i).getOneChoiceAnswer());
+                        answerList.add(newAnswer);
+                        break;
+                    case MULTIPLE_CHOICE:
+                        newAnswer.setSurveyId(surveyId);
+                        newAnswer.setClientId(clientId);
+                        newAnswer.setQuestionId(questionList.get(i).getId());
+                        newAnswer.setMultiAnswers(answers.get(i).getMultiAnswers());
+                        answerList.add(newAnswer);
+                        break;
+                }
+            }
+            answerService.saveAll(answerList);
+            return new ResponseEntity<>(answerList, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ApiOperation("Answer to the one question of the survey for current user, returns answer")
+    @PostMapping(path = "/take/survey/{surveyId}/{questionId}/{clientId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Answer> takeSurvey(
+            @PathVariable int surveyId,
+            @PathVariable int questionId,
+            @PathVariable int clientId,
+            @RequestBody Answer answer) {
+
+        Question question = questionService.findById(questionId);
+
+        Answer newAnswer = new Answer();
+
+        switch (question.getQuestionType()) {
+            case TEXT:
+                newAnswer.setSurveyId(surveyId);
+                newAnswer.setClientId(clientId);
+                newAnswer.setQuestionId(questionId);
+                newAnswer.setAnswerText(answer.getAnswerText());
+                answerService.save(newAnswer);
+                return new ResponseEntity<>(newAnswer, HttpStatus.OK);
+            case ONE_CHOICE:
+                newAnswer.setSurveyId(surveyId);
+                newAnswer.setClientId(clientId);
+                newAnswer.setQuestionId(questionId);
+                newAnswer.setOneChoiceAnswer(answer.getOneChoiceAnswer());
+                answerService.save(newAnswer);
+                return new ResponseEntity<>(newAnswer, HttpStatus.OK);
+            case MULTIPLE_CHOICE:
+                newAnswer.setSurveyId(surveyId);
+                newAnswer.setClientId(clientId);
+                newAnswer.setQuestionId(questionId);
+                newAnswer.setMultiAnswers(answer.getMultiAnswers());
+                answerService.save(newAnswer);
+                return new ResponseEntity<>(newAnswer, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
 
     //done
     @ApiOperation("Check authorities by name, returns role")
@@ -255,7 +366,6 @@ public class SurveyApiController {
         return new ResponseEntity<>("Client has not been found", HttpStatus.NOT_FOUND);
     }
 
-    //<=================================================================================================================
     //done!!!
     @ApiOperation("Register new client, returns client. You have to specify role id: 1-user or 2-admin")
     @PostMapping(path = "/register/client", consumes = MediaType.APPLICATION_JSON_VALUE)

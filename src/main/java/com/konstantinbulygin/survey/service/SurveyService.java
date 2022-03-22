@@ -13,25 +13,25 @@ import java.util.Optional;
 public class SurveyService {
 
     @Autowired
-    SurveyRepository repository;
+    SurveyRepository surveyRepository;
 
     public void save(Survey survey) {
-        repository.save(survey);
+        surveyRepository.save(survey);
     }
 
     public Optional<Survey> findById(int id) {
-        return repository.findById(id);
+        return surveyRepository.findById(id);
     }
 
     public void delete(Survey survey) {
-        repository.delete(survey);
+        surveyRepository.delete(survey);
     }
 
     public List<Survey> findAllSurveyByStartDate(LocalDate localDate) {
-        return repository.findAllSurveyByStartDate(localDate);
+        return surveyRepository.findAllSurveyByStartDate(localDate);
     }
 
-    public List<Survey> findAllSurvey(){
-        return repository.findAllSurvey();
+    public List<Survey> findAllSurvey() {
+        return surveyRepository.findAllSurvey();
     }
 }

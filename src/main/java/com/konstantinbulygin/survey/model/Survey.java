@@ -10,6 +10,7 @@ import org.springframework.data.annotation.CreatedDate;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -39,6 +40,12 @@ public class Survey {
     @NotBlank(message = "Description is mandatory")
     @Column(name = "description")
     private String description;
+
+    @Transient
+    private List<Answer> answerList;
+
+    @Transient
+    private List<Question> questionList;
 
     @Override
     public boolean equals(Object o) {
